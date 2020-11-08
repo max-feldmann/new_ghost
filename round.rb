@@ -4,11 +4,10 @@ class Round_of_Ghost
 
     attr_reader :fragment, :dictionary, :player1, :player2, :current_player
 
-    def initialize(player1, player2, losses)
+    def initialize(player1, player2)
         
         @player1 = player1
         @player2 = player2
-        @losses = losses
 
         @current_player = randomise_start
         
@@ -29,24 +28,23 @@ class Round_of_Ghost
             puts "The current Fragment is #{@fragment}"
         end
 
-        if is_someone_the_ghost
-            puts "The game has handed! Bye bye!"
-        else
-            end_round(loser)
-        end
+    end_round(loser)
+
     end
 
     def end_round(loser)
         puts
+        puts "'#{@fragment}' was a complete word from the dictionary!"
         puts "You have lost this round!"
         puts
-        puts "Start the next round? [y]"
+        puts "End round? [y]"
         answer = gets.chomp
 
-        if answer == "y"
+        if answer == "y" || answer.empty?
             return loser
         else
-            end_round
+            system ("clear")
+            end_round(loser)
         end
 
     end
@@ -71,15 +69,7 @@ class Round_of_Ghost
 
     private
 
-    def is_someone_the_ghost
-        @losses.each do |player, losses|
-            if losses == 2
-                puts "#{player} is the friggin ghost!"
-                return true
-            end
-        end
-        false
-    end
+
     
     def valid_play?(letter)
         return false if letter.empty?

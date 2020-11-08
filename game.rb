@@ -19,21 +19,38 @@ class Game
 
         until @losses.any? {|player, losses| losses == 2}
             system ("clear")
+            puts "Standings:"
             display_standings
             puts
             puts "Welcome to a new round of Ghost!"
             puts
            
-            this_round = Round_of_Ghost.new(@player_1, @player_2, @losses)
+            this_round = Round_of_Ghost.new(@player_1, @player_2)
             loser = this_round.play_round
             @losses[loser] += 1
+
+            is_someone_the_ghost
         end
+
+        puts "The game has ended"
     end
 
     private
 
+    def is_someone_the_ghost
+        @losses.each do |player, losses|
+            if losses == 2
+                puts "#{player} is the friggin ghost!"
+                puts
+                puts "Final Standings were:"
+                display_standings
+                return true
+            end
+        end
+        false
+    end
+
     def display_standings
-        puts "Standings:"
         @losses.each_pair do |player, losses|
             puts player
             p @word[0...losses]
