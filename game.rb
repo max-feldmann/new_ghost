@@ -52,9 +52,17 @@ class Game
 
     def display_standings
         @losses.each_pair do |player, losses|
-            puts player
-            p @word[0...losses]
+            puts "#{player} --> '#{@word[0...losses]}''"
         end
+    end
+
+    def find_spaces(player)
+        length = player.length
+        spaces = ""
+
+        length.times{|n|spaces << " "}
+
+        spaces
     end
 
     def add_players
