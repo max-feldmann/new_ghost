@@ -1,23 +1,22 @@
 require_relative ('round.rb')
+require_relative ('player.rb')
 
 class Game
 
+    attr_accessor :players
 
     def initialize
+        @players = []
+        add_players
 
-        @player_1 = nil
-        @player_2 = nil
         @losses = Hash.new{0}
-
-        @word = "GHOST"
         
+        @word = "GHOST"
     end
 
     def play_a_round
 
-        add_players
-
-        until @losses.any? {|player, losses| losses == 2}
+        until @losses.any? {|player, losses| losses == 5}
             system ("clear")
             puts "Standings:"
             display_standings
@@ -25,7 +24,7 @@ class Game
             puts "Welcome to a new round of Ghost!"
             puts
            
-            this_round = Round_of_Ghost.new(@player_1, @player_2)
+            this_round = Round_of_Ghost.new(@players)     #  (@player_1, @player_2)
             loser = this_round.play_round
             @losses[loser] += 1
 
@@ -35,12 +34,26 @@ class Game
         puts "The game has ended"
     end
 
+    def add_players
+        
+        puts "How many Players are you?"
+        puts
+        number_of_players = gets.chomp.to_i
+
+        i = 0
+        while i < number_of_players
+            puts "Hey player #{i + 1}! What is your name?"
+            @players << Player.new(gets.chomp)
+            i += 1
+        end
+    end
+
     private
 
     def is_someone_the_ghost
         @losses.each do |player, losses|
             if losses == 2
-                puts "#{player} is the friggin ghost!"
+                puts "#{player.player_name} is the Ghost!"
                 puts
                 puts "Final Standings were:"
                 display_standings
@@ -52,26 +65,8 @@ class Game
 
     def display_standings
         @losses.each_pair do |player, losses|
-            puts "#{player} --> '#{@word[0...losses]}''"
+            puts "#{player.player_name} --> '#{@word[0...losses]}''"
         end
-    end
-
-    def find_spaces(player)
-        length = player.length
-        spaces = ""
-
-        length.times{|n|spaces << " "}
-
-        spaces
-    end
-
-    def add_players
-        
-        puts "Hey Player 1! Enter your Name!"
-        @player_1 = gets.chomp
-
-        puts "Hey Player 2! Enter your Name!"
-        @player_2 = gets.chomp
     end
 end
 

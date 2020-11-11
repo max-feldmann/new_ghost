@@ -1,15 +1,15 @@
 require 'set'
+require_relative ('player.rb')
 
 class Round_of_Ghost
 
     attr_reader :fragment, :dictionary, :player1, :player2, :current_player
 
-    def initialize(player1, player2)
+    def initialize(players)
         
-        @player1 = player1
-        @player2 = player2
-
-        @current_player = randomise_start
+        @players = players
+        @current_player = nil
+        randomise_start
         
         @fragment = ""
         @dictionary = create_dictionary
@@ -24,17 +24,18 @@ class Round_of_Ghost
             if we_got_a_loser(fragment)
                 loser = @current_player
             end
+
             next_player
             puts "The current Fragment is #{@fragment}"
         end
 
     end_round(loser)
-
     end
 
     def end_round(loser)
         puts
         puts "'#{@fragment}' was a complete word from the dictionary!"
+        puts
         puts "You have lost this round!"
         puts
         puts "End round? [y]"
@@ -46,11 +47,10 @@ class Round_of_Ghost
             system ("clear")
             end_round(loser)
         end
-
     end
 
     def take_turn(player)
-        puts "It is  #{player}'s turn! Add your Letter to the Fragment!"
+        puts "It is  #{player.player_name}'s turn! Add your Letter to the Fragment!"
         puts
         letter = nil
 
@@ -68,8 +68,6 @@ class Round_of_Ghost
     end
 
     private
-
-
     
     def valid_play?(letter)
         return false if letter.empty?
@@ -96,11 +94,8 @@ class Round_of_Ghost
     end
 
     def next_player
-        if @current_player == @player1
-            @current_player = @player2
-        else
-            @current_player = @player1
-        end
+        current_index = @players.find_index(@current_player)
+        @current_player = @players[(current_index + 1) % @players.length]
     end
 
     def create_dictionary 
@@ -110,11 +105,6 @@ class Round_of_Ghost
     end
 
     def randomise_start
-        random = rand(1..2)
-        if random == 1
-            @current_player = @player1
-        else
-            @current_player = @player2
-        end
+        @current_player = @players[rand(0..@players.length - 1)]
     end
 end
