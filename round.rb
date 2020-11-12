@@ -38,31 +38,9 @@ class Round_of_Ghost
             end
 
             next_player
-            puts "The current Fragment is #{@fragment}"
         end
 
     end_round(loser)
-    end
-
-    def you_lost_a_life_and_are_dead(player)
-        if @current_player.lifes == 0
-            return true
-        end
-            
-        false
-    end
-
-    def end_round(loser)
-        puts
-        puts "End round and start next? [y]"
-        answer = gets.chomp
-
-        if answer == "y" || answer.empty?
-            return loser
-        else
-            system ("clear")
-            end_round(loser)
-        end
     end
 
     def take_turn(player)
@@ -77,8 +55,9 @@ class Round_of_Ghost
                 @current_player.take_a_life
 
                 puts "This wasn´t a valid play!"
-                puts "You have #{@current_player.lifes} lifes left!" 
-                    return if @current_player.lifes == 0
+                puts "Lifes left: #{@current_player.lifes}" 
+                return if @current_player.lifes == 0
+                
                 puts "Try again. Hint: The current Fragment is #{@fragment}"
                 puts
                 letter = nil
@@ -86,6 +65,7 @@ class Round_of_Ghost
         end
 
         add_letter(letter)
+        puts "The current Fragment is #{@fragment}"
     end
 
     private
@@ -101,6 +81,27 @@ class Round_of_Ghost
             return false
         end
         true
+    end
+
+    def you_lost_a_life_and_are_dead(player)
+        if @current_player.lifes == 0
+            return true
+        end
+            
+        false
+    end
+    
+    def end_round(loser)
+        puts
+        puts "End round and start next? [y]"
+        answer = gets.chomp
+
+        if answer == "y" || answer.empty?
+            return loser
+        else
+            system ("clear")
+            end_round(loser)
+        end
     end
 
     def add_letter(letter)

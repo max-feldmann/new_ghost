@@ -6,11 +6,11 @@ class Game
     attr_accessor :players
 
     def initialize
+        system ("clear")
         @players = []
         add_players
 
         @losses = Hash.new{0}
-        
         @word = "GHOST"
     end
 
@@ -24,7 +24,7 @@ class Game
             puts "Welcome to a new round of Ghost!"
             puts
            
-            this_round = Round_of_Ghost.new(@players)     #  (@player_1, @player_2)
+            this_round = Round_of_Ghost.new(@players)
             loser = this_round.play_round
             @losses[loser] += 1
 
