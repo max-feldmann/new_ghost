@@ -8,7 +8,9 @@ class Round_of_Ghost
     def initialize(players)
         
         @players = players
+        @lifes = Hash.new(0)
         @current_player = nil
+        
         randomise_start
         
         @fragment = ""
@@ -16,13 +18,23 @@ class Round_of_Ghost
     end
 
     def play_round
+        @players.each{|player| player.reset_player}
         loser = nil
 
         until loser
             take_turn(@current_player)
 
+            if you_lost_a_life_and_are_dead(@current_player)
+                loser = @current_player
+                puts
+                puts "You have lost this round, because you made too many invalid plays, dude!"
+                break
+            end
+            
             if we_got_a_loser(fragment)
                 loser = @current_player
+                puts
+                puts "'#{@fragment}' was a complete word from the dictionary!"
             end
 
             next_player
@@ -32,13 +44,17 @@ class Round_of_Ghost
     end_round(loser)
     end
 
+    def you_lost_a_life_and_are_dead(player)
+        if @current_player.lifes == 0
+            return true
+        end
+            
+        false
+    end
+
     def end_round(loser)
         puts
-        puts "'#{@fragment}' was a complete word from the dictionary!"
-        puts
-        puts "You have lost this round!"
-        puts
-        puts "End round? [y]"
+        puts "End round and start next? [y]"
         answer = gets.chomp
 
         if answer == "y" || answer.empty?
@@ -50,15 +66,20 @@ class Round_of_Ghost
     end
 
     def take_turn(player)
-        puts "It is  #{player.player_name}'s turn! Add your Letter to the Fragment!"
+        puts "It is  #{player.player_name}'s turn! Add your Letter to the Fragment! (#{@current_player.lifes} lifes left)"
         puts
         letter = nil
 
         until letter
             letter = gets.chomp.downcase
 
-            unless valid_play?(letter)
-                puts "This wasn´t a valid play :( Try again. Hint: The current Fragment is #{@fragment}"
+            if !valid_play?(letter)
+                @current_player.take_a_life
+
+                puts "This wasn´t a valid play!"
+                puts "You have #{@current_player.lifes} lifes left!" 
+                    return if @current_player.lifes == 0
+                puts "Try again. Hint: The current Fragment is #{@fragment}"
                 puts
                 letter = nil
             end
@@ -70,10 +91,11 @@ class Round_of_Ghost
     private
     
     def valid_play?(letter)
-        return false if letter.empty?
-        return false if letter.length > 1
 
         potential_fragment = @fragment + letter
+
+        return false if letter.empty?
+        return false if letter.length > 1
 
         if !is_word_fragment?(potential_fragment)
             return false

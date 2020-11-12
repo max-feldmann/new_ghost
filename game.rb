@@ -52,7 +52,7 @@ class Game
 
     def is_someone_the_ghost
         @losses.each do |player, losses|
-            if losses == 2
+            if losses == 5
                 puts "#{player.player_name} is the Ghost!"
                 puts
                 puts "Final Standings were:"
